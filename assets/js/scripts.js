@@ -1,5 +1,4 @@
 let $ = jQuery
-let myWindow
 
 $('.logo-button').on('click', function(e) {
   e.preventDefault
@@ -11,24 +10,8 @@ $('.logo-button').on('click', function(e) {
     },
     dataType: 'json',
     success: function(data) {
-      openWin(data.redirectURL)
-      var eventMethod = window.addEventListener
-			      ? "addEventListener"
-            : "attachEvent";
-      var eventer = window[eventMethod];
-	    var messageEvent = eventMethod === "attachEvent"
-		        ? "onmessage"
-            : "message";
-
-      eventer(messageEvent, function (e) {
-
-        // if (e.origin !== 'http://the-trusted-iframe-origin.com') return;
-        
-        if (e.data === "myevent" || e.message === "myevent") 
-          alert('Message from iframe just came!');
-        
-        console.log(e);
-      });
+      myWindow = openWin(data.redirectURL)
+      myWindow.addEventListener("message", receiveMessage, false)
     },
     error: function(data) {
       console.log(data)
@@ -38,8 +21,13 @@ $('.logo-button').on('click', function(e) {
 
 function openWin(url) {
   myWindow = window.open(url, "EzraDemo", "menubar=1, resizable=1, width=350, height=750")
+  return myWindow
 }
 
-function closeWin() {
+function closeWin(myWindow) {
   myWindow.close()
+}
+
+function receiveMessage(event) {
+  console.log(event)
 }
